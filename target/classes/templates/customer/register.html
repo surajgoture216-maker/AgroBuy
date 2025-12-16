@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Register</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow">
+                    <div class="card-body p-5">
+                        <h2 class="text-center mb-4">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </h2>
+                        
+                        <!-- Registration Form -->
+                        <form th:action="@{/auth/register}" 
+                              th:object="${userDto}" 
+                              method="post">
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="name" class="form-label">Full Name</label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="name" 
+                                           th:field="*{name}"
+                                           placeholder="Enter your full name">
+                                    <div th:if="${#fields.hasErrors('name')}" 
+                                         th:text="${#fields.errors('name')}" 
+                                         class="text-danger mt-1"></div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <input type="email" 
+                                           class="form-control" 
+                                           id="email" 
+                                           th:field="*{email}"
+                                           placeholder="Enter your email">
+                                    <div th:if="${#fields.hasErrors('email')}" 
+                                         th:text="${#fields.errors('email')}" 
+                                         class="text-danger mt-1"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="password" 
+                                           th:field="*{password}"
+                                           placeholder="Enter a password">
+                                    <div th:if="${#fields.hasErrors('password')}" 
+                                         th:text="${#fields.errors('password')}" 
+                                         class="text-danger mt-1"></div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" 
+                                           class="form-control" 
+                                           id="phone" 
+                                           th:field="*{phone}"
+                                           placeholder="Enter your phone number">
+                                    <div th:if="${#fields.hasErrors('phone')}" 
+                                         th:text="${#fields.errors('phone')}" 
+                                         class="text-danger mt-1"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Address</label>
+                                <textarea class="form-control" 
+                                          id="address" 
+                                          th:field="*{address}"
+                                          rows="3"
+                                          placeholder="Enter your address"></textarea>
+                                    <div th:if="${#fields.hasErrors('address')}" 
+                                         th:text="${#fields.errors('address')}" 
+                                         class="text-danger mt-1"></div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-user-plus me-2"></i>Register Account
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <!-- Links -->
+                        <div class="text-center mt-4">
+                            <p>Already have an account? 
+                                <a href="/auth/login" class="text-success">Login here</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

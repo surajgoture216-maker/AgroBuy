@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>My Orders</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">My Orders</li>
+                    </ol>
+                </nav>
+
+                <h2 class="mb-4"><i class="fas fa-shopping-bag me-2"></i>My Orders</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div th:if="${orders.content.size() == 0}" class="text-center py-5">
+                    <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                    <h4>No orders yet</h4>
+                    <p class="text-muted">You haven't placed any orders yet. Start shopping to see your orders here.</p>
+                    <a href="/products" class="btn btn-success">
+                        <i class="fas fa-shopping-bag me-2"></i>Browse Products
+                    </a>
+                </div>
+
+                <div th:if="${orders.content.size() > 0}">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Date</th>
+                                            <th>Items</th>
+                                            <th>Total Amount</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="order : ${orders.content}">
+                                            <td th:text="${order.id}">123</td>
+                                            <td th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2025 10:00</td>
+                                            <td th:text="${order.orderItems.size()}">2 items</td>
+                                            <td>₹<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}">0.00</span></td>
+                                            <td>
+                                                <span th:if="${order.status.name() == 'PENDING'}" class="badge bg-warning">Pending</span>
+                                                <span th:if="${order.status.name() == 'CONFIRMED'}" class="badge bg-info">Confirmed</span>
+                                                <span th:if="${order.status.name() == 'SHIPPED'}" class="badge bg-primary">Shipped</span>
+                                                <span th:if="${order.status.name() == 'DELIVERED'}" class="badge bg-success">Delivered</span>
+                                                <span th:if="${order.status.name() == 'CANCELLED'}" class="badge bg-danger">Cancelled</span>
+                                            </td>
+                                            <td>
+                                                <a th:href="@{/customer/orders/{id}(id=${order.id})}" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-eye"></i> View Details
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Pagination -->
+                            <nav th:if="${orders.totalPages > 1}" aria-label="Orders pagination">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                        <a class="page-link" th:href="@{/customer/orders(page=${currentPage - 1})}">Previous</a>
+                                    </li>
+                                    <li class="page-item" th:each="i : ${#numbers.sequence(0, orders.totalPages - 1)}"
+                                        th:classappend="${i == currentPage} ? 'active'">
+                                        <a class="page-link" th:href="@{/customer/orders(page=${i})}" th:text="${i + 1}">1</a>
+                                    </li>
+                                    <li class="page-item" th:classappend="${currentPage == orders.totalPages - 1} ? 'disabled'">
+                                        <a class="page-link" th:href="@{/customer/orders(page=${currentPage + 1})}">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

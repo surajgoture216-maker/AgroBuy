@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow">
+                    <div class="card-body p-5">
+                        <h2 class="text-center mb-4">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </h2>
+                        
+                        <!-- Login Form -->
+                        <form th:action="@{/auth/login}" method="post">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" 
+                                       class="form-control" 
+                                       id="email" 
+                                       name="username" 
+                                       placeholder="Enter your email"
+                                       required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="password" 
+                                       name="password" 
+                                       placeholder="Enter your password"
+                                       required>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <!-- Error Message -->
+                        <div th:if="${loginError}" class="alert alert-danger mt-3">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Invalid email or password. Please try again.
+                        </div>
+                        
+                        <!-- Links -->
+                        <div class="text-center mt-4">
+                            <p>Don't have an account? 
+                                <a href="/auth/register" class="text-success">Register here</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

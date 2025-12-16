@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Order Details</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="/customer/orders">My Orders</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Order #<span th:text="${order.id}">123</span></li>
+                    </ol>
+                </nav>
+
+                <h2 class="mb-4"><i class="fas fa-receipt me-2"></i>Order Details</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Order Items -->
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Order Items</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${order.orderItems}">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img th:src="${item.product.imageUrl}" alt="Product"
+                                                     class="img-thumbnail me-2" style="width: 50px; height: 50px;">
+                                                <div>
+                                                    <strong th:text="${item.product.name}">Product Name</strong><br>
+                                                    <small class="text-muted" th:text="${item.product.brand}">Brand</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td th:text="${item.quantity}">1</td>
+                                        <td>₹<span th:text="${#numbers.formatDecimal(item.priceAtPurchase, 1, 2)}">0.00</span></td>
+                                        <td>₹<span th:text="${#numbers.formatDecimal(item.quantity * item.priceAtPurchase, 1, 2)}">0.00</span></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                        <td><strong>₹<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}">0.00</span></strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Information -->
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Order Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Order ID:</strong> <span th:text="${order.id}">123</span></p>
+                        <p><strong>Order Date:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2025 10:00</span></p>
+                        <p><strong>Last Updated:</strong> <span th:text="${#temporals.format(order.updatedAt, 'dd/MM/yyyy HH:mm')}">01/01/2025 10:00</span></p>
+                        <p><strong>Status:</strong>
+                            <span th:if="${order.status.name() == 'PENDING'}" class="badge bg-warning">Pending</span>
+                            <span th:if="${order.status.name() == 'CONFIRMED'}" class="badge bg-info">Confirmed</span>
+                            <span th:if="${order.status.name() == 'SHIPPED'}" class="badge bg-primary">Shipped</span>
+                            <span th:if="${order.status.name() == 'DELIVERED'}" class="badge bg-success">Delivered</span>
+                            <span th:if="${order.status.name() == 'CANCELLED'}" class="badge bg-danger">Cancelled</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Shipping Address</h5>
+                    </div>
+                    <div class="card-body">
+                        <p th:text="${order.shippingAddress}">Shipping Address</p>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <a href="/customer/orders" class="btn btn-secondary w-100">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Orders
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Customer Orders</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-shopping-cart me-2"></i>Orders for <span th:text="${customer.name}">Customer Name</span></h2>
+                    <a href="/admin/customers" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Customers
+                    </a>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div th:if="${#lists.isEmpty(orders)}" class="text-center py-4">
+                            <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                            <h4>No orders found</h4>
+                            <p>This customer hasn't placed any orders yet.</p>
+                        </div>
+
+                        <div th:if="${!#lists.isEmpty(orders)}" class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Date</th>
+                                        <th>Total Amount</th>
+                                        <th>Status</th>
+                                        <th>Shipping Address</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="order : ${orders}">
+                                        <td th:text="${order.id}">1</td>
+                                        <td th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2025 10:00</td>
+                                        <td>₹<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}">0.00</span></td>
+                                        <td>
+                                            <span th:if="${order.status.name() == 'PENDING'}" class="badge bg-warning">Pending</span>
+                                            <span th:if="${order.status.name() == 'CONFIRMED'}" class="badge bg-info">Confirmed</span>
+                                            <span th:if="${order.status.name() == 'SHIPPED'}" class="badge bg-primary">Shipped</span>
+                                            <span th:if="${order.status.name() == 'DELIVERED'}" class="badge bg-success">Delivered</span>
+                                            <span th:if="${order.status.name() == 'CANCELLED'}" class="badge bg-danger">Cancelled</span>
+                                        </td>
+                                        <td th:text="${order.shippingAddress}">Address</td>
+                                        <td>
+                                            <a th:href="@{/admin/orders/{id}(id=${order.id})}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-eye"></i> View Details
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

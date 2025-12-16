@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/base}">
+<head>
+    <title th:text="${isEdit} ? 'Edit Product' : 'Add Product'">Add Product</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 th:text="${isEdit} ? 'Edit Product' : 'Add New Product'">
+                            <i class="fas fa-plus me-2"></i>Add New Product
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/admin/products/save}" method="post" enctype="multipart/form-data" th:object="${productDto}">
+                            <input type="hidden" th:field="*{id}"/>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="name" class="form-label">Product Name *</label>
+                                    <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="category" class="form-label">Category *</label>
+                                    <select class="form-select" id="category" th:field="*{category}" required>
+                                        <option value="">Select Category</option>
+                                        <option value="NPK">NPK Fertilizers</option>
+                                        <option value="Organic">Organic Fertilizers</option>
+                                        <option value="Bio">Bio Fertilizers</option>
+                                        <option value="Micro-nutrients">Micro-nutrients</option>
+                                        <option value="Specialty">Specialty Fertilizers</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" rows="3" th:field="*{description}"></textarea>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="brand" class="form-label">Brand</label>
+                                    <input type="text" class="form-control" id="brand" th:field="*{brand}">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="weight" class="form-label">Weight (kg)</label>
+                                    <input type="number" step="0.01" class="form-control" id="weight" th:field="*{weight}">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="price" class="form-label">Price (₹) *</label>
+                                    <input type="number" step="0.01" class="form-control" id="price" th:field="*{price}" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="stock" class="form-label">Stock Quantity *</label>
+                                    <input type="number" class="form-control" id="stock" th:field="*{stock}" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}"></div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="imageFile" class="form-label">Product Image</label>
+                                <input type="file" class="form-control" id="imageFile" name="imageFile" accept="image/*">
+                                <div class="form-text">Upload a product image (JPG, PNG, etc.) or leave empty to keep current image</div>
+                                <div th:if="${productDto.imageUrl}" class="mt-2">
+                                    <small class="text-muted">Current image:</small><br>
+                                    <img th:src="${productDto.imageUrl}" alt="Current product image" class="img-thumbnail" style="max-width: 200px;">
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save me-2"></i>Save Product
+                                </button>
+                                <a href="/admin/products" class="btn btn-secondary">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

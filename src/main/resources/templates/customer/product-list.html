@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Products</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2><i class="fas fa-shopping-bag me-2"></i>Our Products</h2>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <form th:action="@{/products}" method="get">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control" 
+                               placeholder="Search products..." th:value="${search}">
+                        <button class="btn btn-success" type="submit">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <div class="btn-group" role="group">
+                    <a th:href="@{/products}" class="btn btn-outline-success">All</a>
+                    <a th:href="@{/products(category='NPK')}" class="btn btn-outline-success">NPK</a>
+                    <a th:href="@{/products(category='Organic')}" class="btn btn-outline-success">Organic</a>
+                    <a th:href="@{/products(category='Bio')}" class="btn btn-outline-success">Bio</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="row">
+            <div th:each="product : ${products}" class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card h-100">
+                    <img th:src="${product.imageUrl}" class="card-img-top" 
+                         style="height: 200px; object-fit: cover;" th:alt="${product.name}">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <a th:href="@{'/products/' + ${product.id}}" 
+                               class="text-decoration-none text-success" th:text="${product.name}">Product</a>
+                        </h6>
+                        <p class="card-text text-truncate" th:text="${product.description}">Description</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-success fw-bold">₹<span th:text="${product.price}">0</span></span>
+                            <span class="badge bg-success" th:text="${product.category}">Category</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div sec:authorize="hasRole('CUSTOMER')" class="d-grid">
+                            <button th:if="${product.inStock}"
+                                    th:data-product-id="${product.id}"
+                                    class="btn btn-success btn-sm add-to-cart">
+                                <i class="fas fa-cart-plus"></i> Add to Cart
+                            </button>
+                            <button th:unless="${product.inStock}" class="btn btn-secondary btn-sm" disabled>
+                                Out of Stock
+                            </button>
+                        </div>
+                        <div sec:authorize="!isAuthenticated()" class="d-grid">
+                            <a href="/auth/login" class="btn btn-success btn-sm">Login to Order</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Products Message -->
+        <div th:if="${products.empty}" class="text-center py-5">
+            <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+            <p class="text-muted">No products found.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Admin - Customers Management</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4"><i class="fas fa-users me-2"></i>Customers Management</h2>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Address</th>
+                                        <th>Registered</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="customer : ${customers.content}">
+                                        <td th:text="${customer.id}">1</td>
+                                        <td th:text="${customer.name}">Customer Name</td>
+                                        <td th:text="${customer.email}">customer@example.com</td>
+                                        <td th:text="${customer.phone}">+1234567890</td>
+                                        <td th:text="${customer.address}">Address</td>
+                                        <td th:text="${#temporals.format(customer.createdAt, 'dd/MM/yyyy')}">01/01/2025</td>
+                                        <td>
+                                            <a th:href="@{/admin/customers/{id}/orders(id=${customer.id})}" class="btn btn-sm btn-info me-1">
+                                                <i class="fas fa-list"></i> Orders
+                                            </a>
+                                            <form th:action="@{/admin/customers/{id}/promote(id=${customer.id})}" method="post" class="d-inline"
+                                                  onsubmit="return confirm('Are you sure you want to promote this user to admin?')">
+                                                <button type="submit" class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-user-shield"></i> Make Admin
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <nav th:if="${customers.totalPages > 1}" aria-label="Customers pagination">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/admin/customers(page=${currentPage - 1})}">Previous</a>
+                                </li>
+                                <li class="page-item" th:each="i : ${#numbers.sequence(0, customers.totalPages - 1)}"
+                                    th:classappend="${i == currentPage} ? 'active'">
+                                    <a class="page-link" th:href="@{/admin/customers(page=${i})}" th:text="${i + 1}">1</a>
+                                </li>
+                                <li class="page-item" th:classappend="${currentPage == customers.totalPages - 1} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/admin/customers(page=${currentPage + 1})}">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

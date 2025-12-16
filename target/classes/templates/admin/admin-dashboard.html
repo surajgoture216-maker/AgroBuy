@@ -1,0 +1,171 @@
+t<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4"><i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard</h2>
+
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <!-- Total Products -->
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h5 class="card-title">Total Products</h5>
+                                        <h3 th:text="${totalProducts}">0</h3>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-boxes fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Customers -->
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h5 class="card-title">Total Customers</h5>
+                                        <h3 th:text="${totalCustomers}">0</h3>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-users fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Orders -->
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h5 class="card-title">Total Orders</h5>
+                                        <h3 th:text="${totalOrders}">0</h3>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-shopping-cart fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Revenue -->
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h5 class="card-title">Total Revenue</h5>
+                                        <h3>₹<span th:text="${#numbers.formatDecimal(orderStats.totalRevenue ?: 0, 1, 2)}">0.00</span></h3>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-rupee-sign fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Status Breakdown -->
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Order Status Overview</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-md-2 mb-3">
+                                        <div class="border rounded p-3">
+                                            <h4 class="text-warning" th:text="${orderStats.pendingOrders}">0</h4>
+                                            <small class="text-muted">Pending</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <div class="border rounded p-3">
+                                            <h4 class="text-info" th:text="${orderStats.confirmedOrders}">0</h4>
+                                            <small class="text-muted">Confirmed</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <div class="border rounded p-3">
+                                            <h4 class="text-primary" th:text="${orderStats.shippedOrders}">0</h4>
+                                            <small class="text-muted">Shipped</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <div class="border rounded p-3">
+                                            <h4 class="text-success" th:text="${orderStats.deliveredOrders}">0</h4>
+                                            <small class="text-muted">Delivered</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <div class="border rounded p-3">
+                                            <h4 class="text-danger" th:text="${orderStats.cancelledOrders}">0</h4>
+                                            <small class="text-muted">Cancelled</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Quick Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <a href="/admin/products/add" class="btn btn-primary">
+                                        <i class="fas fa-plus me-2"></i>Add New Product
+                                    </a>
+                                    <a href="/admin/products" class="btn btn-outline-primary">
+                                        <i class="fas fa-boxes me-2"></i>Manage Products
+                                    </a>
+                                    <a href="/admin/customers" class="btn btn-outline-success">
+                                        <i class="fas fa-users me-2"></i>View Customers
+                                    </a>
+                                    <a href="/admin/orders" class="btn btn-outline-info">
+                                        <i class="fas fa-shopping-cart me-2"></i>Manage Orders
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h5>Recent Activity</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center text-muted">
+                                    <i class="fas fa-chart-line fa-2x mb-2"></i>
+                                    <p>Activity tracking coming soon</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

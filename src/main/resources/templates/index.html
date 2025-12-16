@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Fertilizer Shop - Home</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Hero Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card bg-success text-white">
+                    <div class="card-body py-5">
+                        <div class="row align-items-center">
+                            <div class="col-lg-8">
+                                <h1 class="display-4 fw-bold mb-3">
+                                    <i class="fas fa-leaf me-3"></i>Premium Fertilizers
+                                </h1>
+                                <p class="lead mb-4">
+                                    High-quality fertilizers for all your agricultural needs. 
+                                    Boost your crop yield with our scientifically formulated products.
+                                </p>
+                                <div class="d-grid d-md-inline-flex gap-2">
+                                    <a href="/products" class="btn btn-light btn-lg">
+                                        <i class="fas fa-shopping-bag me-2"></i>Shop Now
+                                    </a>
+                                    <a href="/auth/login" class="btn btn-outline-light btn-lg">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Join Us
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 text-center">
+                                <i class="fas fa-seedling" style="font-size: 8rem; opacity: 0.3;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Featured Categories -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="text-center mb-4">
+                    <i class="fas fa-tags me-2"></i>Product Categories
+                </h2>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-balance-scale fa-3x text-success mb-3"></i>
+                                <h5 class="card-title">NPK Fertilizers</h5>
+                                <p class="card-text">Complete nutrition with balanced nitrogen, phosphorus, and potassium for optimal plant growth.</p>
+                                <a href="/products?category=NPK" class="btn btn-success">
+                                    <i class="fas fa-eye me-2"></i>View Products
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-leaf fa-3x text-success mb-3"></i>
+                                <h5 class="card-title">Organic Fertilizers</h5>
+                                <p class="card-text">Natural and sustainable fertilizers made from organic sources for healthy soil and plants.</p>
+                                <a href="/products?category=Organic" class="btn btn-success">
+                                    <i class="fas fa-eye me-2"></i>View Products
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-microscope fa-3x text-success mb-3"></i>
+                                <h5 class="card-title">Bio Fertilizers</h5>
+                                <p class="card-text">Living microorganisms that enhance nutrient availability and promote plant growth.</p>
+                                <a href="/products?category=Bio" class="btn btn-success">
+                                    <i class="fas fa-eye me-2"></i>View Products
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Featured Products -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="text-center mb-4">
+                    <i class="fas fa-star me-2"></i>Featured Products
+                </h2>
+                <div class="row" th:if="${featuredProducts != null}">
+                    <div th:each="product : ${featuredProducts}" 
+                         class="col-lg-3 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="position-relative">
+                                <img th:src="${product.imageUrl ?: 'https://via.placeholder.com/300x200'}" 
+                                     th:alt="${product.name}"
+                                     class="card-img-top"
+                                     style="height: 200px; object-fit: cover;">
+                                <div th:if="${!product.inStock}" 
+                                     class="position-absolute top-0 start-0 bg-danger text-white p-2">
+                                    Out of Stock
+                                </div>
+                                <div th:if="${product.category == 'Organic'}" 
+                                     class="position-absolute top-0 end-0 bg-success text-white p-2">
+                                    <i class="fas fa-leaf me-1"></i>Organic
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <a th:href="@{'/products/' + ${product.id}}" 
+                                       class="text-decoration-none text-success">
+                                        [[${product.name}]]
+                                    </a>
+                                </h6>
+                                <p class="card-text text-truncate" style="max-height: 3em;">
+                                    [[${product.description}]]
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="text-success fw-bold">
+                                            ₹[[${product.price}]]
+                                        </span>
+                                        <small class="text-muted">/ kg</small>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-success">[[${product.category}]]</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent border-0">
+                                <div sec:authorize="hasRole('CUSTOMER')" class="d-grid">
+                                    <button th:if="${product.inStock}"
+                                            th:data-product-id="${product.id}"
+                                            class="btn btn-success btn-sm add-to-cart">
+                                        <i class="fas fa-cart-plus me-1"></i>Add to Cart
+                                    </button>
+                                    <button th:if="${!product.inStock}"
+                                            class="btn btn-outline-success btn-sm disabled">
+                                        <i class="fas fa-cart-plus me-1"></i>Out of Stock
+                                    </button>
+                                </div>
+                                <div sec:authorize="!isAuthenticated()" class="d-grid">
+                                    <a href="/auth/login" class="btn btn-success btn-sm">
+                                        <i class="fas fa-sign-in-alt me-1"></i>Login to Order
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Fallback when no featured products -->
+                <div th:if="${featuredProducts == null}" class="text-center py-5">
+                    <p class="text-muted">Browse our complete catalog to find the best fertilizers for your needs.</p>
+                    <a href="/products" class="btn btn-success btn-lg">
+                        <i class="fas fa-shopping-bag me-2"></i>View All Products
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Why Choose Us -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="text-center mb-4">
+                    <i class="fas fa-award me-2"></i>Why Choose Us?
+                </h2>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="card border-0 text-center">
+                            <div class="card-body">
+                                <i class="fas fa-shield-alt fa-2x text-success mb-3"></i>
+                                <h6>Quality Guaranteed</h6>
+                                <p class="text-muted small">All our products meet international quality standards</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card border-0 text-center">
+                            <div class="card-body">
+                                <i class="fas fa-truck fa-2x text-success mb-3"></i>
+                                <h6>Fast Delivery</h6>
+                                <p class="text-muted small">Quick and reliable delivery across the country</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card border-0 text-center">
+                            <div class="card-body">
+                                <i class="fas fa-rupee-sign fa-2x text-success mb-3"></i>
+                                <h6>Competitive Prices</h6>
+                                <p class="text-muted small">Best prices without compromising on quality</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card border-0 text-center">
+                            <div class="card-body">
+                                <i class="fas fa-headset fa-2x text-success mb-3"></i>
+                                <h6>Expert Support</h6>
+                                <p class="text-muted small">Professional guidance for optimal fertilizer use</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Call to Action -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card bg-light">
+                    <div class="card-body text-center py-5">
+                        <h3 class="mb-3">Ready to Boost Your Crop Yield?</h3>
+                        <p class="lead mb-4">
+                            Join thousands of satisfied farmers who trust our fertilizers for better harvests
+                        </p>
+                        <div class="d-grid d-md-flex gap-2 justify-content-center">
+                            <a href="/products" class="btn btn-success btn-lg">
+                                <i class="fas fa-shopping-bag me-2"></i>Shop Fertilizers
+                            </a>
+                            <a href="/auth/register" class="btn btn-outline-success btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

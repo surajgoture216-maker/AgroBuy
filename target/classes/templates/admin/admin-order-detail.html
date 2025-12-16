@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Order Details</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-receipt me-2"></i>Order #<span th:text="${order.id}">123</span></h2>
+                    <a href="/admin/orders" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Orders
+                    </a>
+                </div>
+
+                <div class="row">
+                    <!-- Order Information -->
+                    <div class="col-md-8">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5>Order Items</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="item : ${order.orderItems}">
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <img th:src="${item.product.imageUrl}" alt="Product"
+                                                             class="img-thumbnail me-2" style="width: 50px; height: 50px;">
+                                                        <div>
+                                                            <strong th:text="${item.product.name}">Product Name</strong><br>
+                                                            <small class="text-muted" th:text="${item.product.brand}">Brand</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td th:text="${item.quantity}">1</td>
+                                                <td>₹<span th:text="${#numbers.formatDecimal(item.priceAtPurchase, 1, 2)}">0.00</span></td>
+                                                <td>₹<span th:text="${#numbers.formatDecimal(item.quantity * item.priceAtPurchase, 1, 2)}">0.00</span></td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                                <td><strong>₹<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}">0.00</span></strong></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Details -->
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5>Order Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Customer:</strong> <span th:text="${order.customer.name}">Customer Name</span></p>
+                                <p><strong>Email:</strong> <span th:text="${order.customer.email}">customer@example.com</span></p>
+                                <p><strong>Phone:</strong> <span th:text="${order.customer.phone}">+1234567890</span></p>
+                                <p><strong>Order Date:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2025 10:00</span></p>
+                                <p><strong>Last Updated:</strong> <span th:text="${#temporals.format(order.updatedAt, 'dd/MM/yyyy HH:mm')}">01/01/2025 10:00</span></p>
+                                <p><strong>Status:</strong>
+                                    <span th:if="${order.status.name() == 'PENDING'}" class="badge bg-warning">Pending</span>
+                                    <span th:if="${order.status.name() == 'CONFIRMED'}" class="badge bg-info">Confirmed</span>
+                                    <span th:if="${order.status.name() == 'SHIPPED'}" class="badge bg-primary">Shipped</span>
+                                    <span th:if="${order.status.name() == 'DELIVERED'}" class="badge bg-success">Delivered</span>
+                                    <span th:if="${order.status.name() == 'CANCELLED'}" class="badge bg-danger">Cancelled</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Shipping Address</h5>
+                            </div>
+                            <div class="card-body">
+                                <p th:text="${order.shippingAddress}">Shipping Address</p>
+                            </div>
+                        </div>
+
+                        <!-- Update Status -->
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5>Update Status</h5>
+                            </div>
+                            <div class="card-body">
+                                <form th:action="@{/admin/orders/{id}/status(id=${order.id})}" method="post">
+                                    <div class="mb-3">
+                                        <label for="status" class="form-label">Order Status</label>
+                                        <select name="status" class="form-select" id="status">
+                                            <option th:value="'PENDING'" th:selected="${order.status.name() == 'PENDING'}">Pending</option>
+                                            <option th:value="'CONFIRMED'" th:selected="${order.status.name() == 'CONFIRMED'}">Confirmed</option>
+                                            <option th:value="'SHIPPED'" th:selected="${order.status.name() == 'SHIPPED'}">Shipped</option>
+                                            <option th:value="'DELIVERED'" th:selected="${order.status.name() == 'DELIVERED'}">Delivered</option>
+                                            <option th:value="'CANCELLED'" th:selected="${order.status.name() == 'CANCELLED'}">Cancelled</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-save me-2"></i>Update Status
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

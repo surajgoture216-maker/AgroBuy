@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Admin - Orders Management</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4"><i class="fas fa-shopping-cart me-2"></i>Orders Management</h2>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Date</th>
+                                        <th>Total Amount</th>
+                                        <th>Status</th>
+                                        <th>Shipping Address</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="order : ${orders.content}">
+                                        <td th:text="${order.id}">1</td>
+                                        <td th:text="${order.customer.name}">Customer Name</td>
+                                        <td th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2025 10:00</td>
+                                        <td>₹<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}">0.00</span></td>
+                                        <td>
+                                            <form th:action="@{/admin/orders/{id}/status(id=${order.id})}" method="post" class="d-inline">
+                                                <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                                                    <option th:value="'PENDING'" th:selected="${order.status.name() == 'PENDING'}">Pending</option>
+                                                    <option th:value="'CONFIRMED'" th:selected="${order.status.name() == 'CONFIRMED'}">Confirmed</option>
+                                                    <option th:value="'SHIPPED'" th:selected="${order.status.name() == 'SHIPPED'}">Shipped</option>
+                                                    <option th:value="'DELIVERED'" th:selected="${order.status.name() == 'DELIVERED'}">Delivered</option>
+                                                    <option th:value="'CANCELLED'" th:selected="${order.status.name() == 'CANCELLED'}">Cancelled</option>
+                                                </select>
+                                            </form>
+                                        </td>
+                                        <td th:text="${order.shippingAddress}">Address</td>
+                                        <td>
+                                            <a th:href="@{/admin/orders/{id}(id=${order.id})}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-eye"></i> View Details
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <nav th:if="${orders.totalPages > 1}" aria-label="Orders pagination">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/admin/orders(page=${currentPage - 1})}">Previous</a>
+                                </li>
+                                <li class="page-item" th:each="i : ${#numbers.sequence(0, orders.totalPages - 1)}"
+                                    th:classappend="${i == currentPage} ? 'active'">
+                                    <a class="page-link" th:href="@{/admin/orders(page=${i})}" th:text="${i + 1}">1</a>
+                                </li>
+                                <li class="page-item" th:classappend="${currentPage == orders.totalPages - 1} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/admin/orders(page=${currentPage + 1})}">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
